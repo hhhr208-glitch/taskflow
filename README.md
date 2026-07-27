@@ -141,9 +141,7 @@ taskflow/
 
     Object‑level permissions (owner, creator, assignee).
 
-📊 ER Diagram
 
-    Add your ER diagram image here
 
 🤝 Contributing
 
@@ -153,8 +151,7 @@ This is a personal portfolio project. For suggestions, please open an issue or r
 This project is for educational purposes. You are free to use it as a reference for your own learning.
 👨‍💻 Author
 
-Your Name
-GitHub · LinkedIn
+rasool hashemi
 🙏 Acknowledgements
 
     Django, Next.js, Tailwind, and the amazing open‑source community.
