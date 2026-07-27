@@ -1,0 +1,14 @@
+
+*.py linguist-language=Python
+*.ts linguist-language=TypeScript
+*.tsx linguist-language=TypeScript
+*.js linguist-language=JavaScript
+*.jsx linguist-language=JavaScript
+*.css linguist-language=CSS
+*.scss linguist-language=SCSS
+*.json linguist-language=JSON
+*.yml linguist-language=YAML
+*.yaml linguist-language=YAML
+*.toml linguist-language=TOML
+package-lock.json linguist-generated=true
+yarn.lock linguist-generated=true
