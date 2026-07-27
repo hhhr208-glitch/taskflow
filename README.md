@@ -75,19 +75,6 @@ A full‑stack project management application built with **Django REST Framework
 
 ---
 
-## 📸 Screenshots
-
-| | |
-|:-------------------------:|:-------------------------:|
-| **Login / Signup** | **Projects Page** |
-| *Add screenshot here* | *Add screenshot here* |
-| **Kanban Board** | **Filters & Search** |
-| *Add screenshot here* | *Add screenshot here* |
-| **Dark Mode** | **Invite Modal** |
-| *Add screenshot here* | *Add screenshot here* |
-
----
-
 ## 🚀 Getting Started (Local Development)
 
 ### Prerequisites
