@@ -8,7 +8,7 @@ from django.db.models import Count, Q
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.decorators import action
 from rest_framework.response import Response
-  
+from rest_framework.exceptions import PermissionDenied, ValidationError  
 
 class CustomPagination(PageNumberPagination):
     page_size = 10                   
@@ -50,13 +50,13 @@ class InvitationViewSet(viewsets.ModelViewSet):
         project = serializer.validated_data['project']
         invited_user = serializer.validated_data['invited_user']
         if project.owner != self.request.user:
-            raise PermissionError("Only project owner can invite")
+            raise PermissionDenied("Only project owner can invite")
         # Check if already a member
         if project.members.filter(id=invited_user.id).exists() or project.owner == invited_user:
-            raise ValueError("User is already a member or is the owner")
+            raise ValidationError("User is already a member or is the owner") 
         # Check if there's already a pending invitation
         if Invitation.objects.filter(project=project, invited_user=invited_user, status='pending').exists():
-            raise ValueError("Invitation already pending")
+            raise ValidationError("Invitation already pending")
         serializer.save(invited_by=self.request.user)
 
     @action(detail=True, methods=['post'])
