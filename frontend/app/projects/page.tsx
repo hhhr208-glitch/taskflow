@@ -4,7 +4,7 @@ import apiClient from '@/lib/axios';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Calendar, ChevronLeft, ChevronRight, Edit2, FolderOpen, LogOut, Plus, Search, Trash2, Users, X } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { Suspense, useEffect, useRef, useState } from 'react';
 import { toast } from 'react-hot-toast';
 
 // ---------- Types ----------
@@ -208,8 +208,8 @@ function ProjectCard({ project, onDelete }: { project: Project; onDelete: () => 
   );
 }
 
-// ---------- Main Page Component (with URL pagination) ----------
-export default function ProjectsPage() {
+// ---------- Main Content Component (uses useSearchParams) ----------
+function ProjectsContent() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const searchParams = useSearchParams();
@@ -402,37 +402,33 @@ export default function ProjectsPage() {
 
         {projects.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-center bg-white/60 dark:bg-gray-800/40 backdrop-blur-sm rounded-3xl border border-gray-200 dark:border-gray-700 shadow-lg transition-all duration-300 hover:shadow-xl">
-       {/* Animated illustration (custom SVG) */}
-         <div className="relative w-24 h-24 mb-6">
-          <div className="absolute inset-0 bg-gradient-to-br from-indigo-400 to-purple-600 rounded-3xl opacity-10 animate-pulse"></div>
-           <div className="relative flex items-center justify-center w-full h-full">
-           <svg className="w-16 h-16 text-indigo-500 drop-shadow-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.2">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0    00-2 2z" />
-          <path strokeLinecap="round" strokeLinejoin="round" d="M12 11v4m-2-2h4" />
-          </svg>
-       </div>
+            <div className="relative w-24 h-24 mb-6">
+              <div className="absolute inset-0 bg-gradient-to-br from-indigo-400 to-purple-600 rounded-3xl opacity-10 animate-pulse"></div>
+              <div className="relative flex items-center justify-center w-full h-full">
+                <svg className="w-16 h-16 text-indigo-500 drop-shadow-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 11v4m-2-2h4" />
+                </svg>
+              </div>
+            </div>
+            <h3 className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+              {search ? 'پروژه‌ای یافت نشد' : 'هنوز پروژه‌ای وجود ندارد'}
+            </h3>
+            <p className="text-gray-500 dark:text-gray-400 mt-2 max-w-sm">
+              {search 
+                ? 'هیچ پروژه‌ای با این عبارت پیدا نشد. عبارت دیگری را امتحان کنید.'
+                : 'اولین پروژه خود را بسازید و همکاری را شروع کنید.'}
+            </p>
+            {!search && (
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className="mt-6 inline-flex items-center gap-2 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-xl shadow-md hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02]"
+              >
+                <Plus className="w-4 h-4" />
+                <span>ساخت پروژه جدید</span>
+              </button>
+            )}
           </div>
-
-        <h3 className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-        {search ? 'پروژه‌ای یافت نشد' : 'هنوز پروژه‌ای وجود ندارد'}
-       </h3>
-  
-       <p className="text-gray-500 dark:text-gray-400 mt-2 max-w-sm">
-       {search 
-       ? 'هیچ پروژه‌ای با این عبارت پیدا نشد. عبارت دیگری را امتحان کنید.'
-      : 'اولین پروژه خود را بسازید و همکاری را شروع کنید.'}
-       </p>
-  
-      {!search && (
-        <button
-         onClick={() => setIsModalOpen(true)}
-        className="mt-6 inline-flex items-center gap-2 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-xl shadow-md hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02]"
-      >
-         <Plus className="w-4 h-4" />
-        <span>ساخت پروژه جدید</span>
-      </button>
-     )}
-       </div>
         ) : (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
@@ -532,5 +528,14 @@ export default function ProjectsPage() {
         </div>
       )}
     </div>
+  );
+}
+
+// ---------- Main Page Component (wrapped in Suspense) ----------
+export default function ProjectsPage() {
+  return (
+    <Suspense fallback={<ProjectsSkeleton />}>
+      <ProjectsContent />
+    </Suspense>
   );
 }
