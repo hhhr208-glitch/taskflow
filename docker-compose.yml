@@ -22,6 +22,14 @@ services:
       interval: 5s
       timeout: 3s
       retries: 5
+  redis:
+    image: redis:alpine
+    container_name: django_redis
+    ports:
+      - "6379:6379"
+    networks:
+      - app_network
+    restart: unless-stopped    
 
   backend:
     build: ./backend
