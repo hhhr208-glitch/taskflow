@@ -41,10 +41,20 @@ export default function AuthPage() {
 
       const data = await res.json();
 
-      if (!res.ok) {
-        throw new Error(data.detail || data.error || 'خطا در احراز هویت');
-      }
-
+    if (!res.ok) {
+  // Case 1: Validation errors (field-specific)
+  if (data.password || data.password2 || data.username || data.email) {
+    const errors = [];
+    if (data.password) errors.push(...data.password);
+    if (data.password2) errors.push(...data.password2);
+    if (data.username) errors.push(...data.username);
+    if (data.email) errors.push(...data.email);
+    throw new Error(errors.join(' • '));
+  }
+  
+  // Case 2: Generic errors (detail, error, or fallback)
+  throw new Error(data.detail || data.error || 'خطا در احراز هویت');
+}
       if (isLogin) {
         router.push('/projects');
       } else {
