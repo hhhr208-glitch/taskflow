@@ -44,3 +44,5 @@ jobs:
       # 8. REAL CHECK 5: Check if Django API is responding
       - name: Check Django API is live
         run: curl --fail http://localhost:8000
+
+      #.  
