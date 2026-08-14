@@ -67,4 +67,4 @@ networks:
     driver: bridge
 
 volumes:
-  postgres_data_new:# Testing CI
+  postgres_data_new:
