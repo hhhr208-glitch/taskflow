@@ -1,16 +1,46 @@
-name: Just Test If Docker Builds
+name: Real World CI - Full Stack Tests
 
 on:
   pull_request:
     branches: [ main ]
 
 jobs:
-  test-docker:
-    name: Try to build the compose file
+  test-everything:
+    name: Build, Boot, Migrate, and Test with Pytest
     runs-on: ubuntu-latest
+
     steps:
       - name: Get the code
         uses: actions/checkout@v4
 
-      - name: Build everything in docker-compose.yml
+      # 1. BUILD THE CONTAINERS
+      - name: Build Docker images
         run: docker compose build
+
+      # 2. START EVERYTHING IN THE BACKGROUND (DB + Redis + Django + Next)
+      - name: Start full stack
+        run: docker compose up -d
+
+      # 3. WAIT FOR THE DATABASE AND BACKEND TO WAKE UP (10 seconds)
+      - name: Wait for services to be ready
+        run: sleep 10
+
+      # 4. REAL CHECK 1: Ensure migrations exist (Catches forgotten makemigrations)
+      - name: Check Django migrations
+        run: docker compose exec -T backend python manage.py makemigrations --check
+
+      # 5. REAL CHECK 2: Apply migrations to the test database
+      - name: Apply migrations
+        run: docker compose exec -T backend python manage.py migrate
+
+      # 6. REAL CHECK 3: RUN YOUR PYTEST SUITE (The main event)
+      - name: Run Django Unit Tests with Pytest
+        run: docker compose exec -T backend pytest -v --maxfail=5
+
+      # 7. REAL CHECK 4: Check if Next.js is actually serving HTML
+      - name: Check Next.js is live
+        run: curl --fail http://localhost:3000
+
+      # 8. REAL CHECK 5: Check if Django API is responding
+      - name: Check Django API is live
+        run: curl --fail http://localhost:8000
