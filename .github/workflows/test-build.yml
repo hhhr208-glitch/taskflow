@@ -1,4 +1,4 @@
-echo 'name: Just Test If Docker Builds
+name: Just Test If Docker Builds
 
 on:
   pull_request:
