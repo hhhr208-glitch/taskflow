@@ -4,6 +4,11 @@ from django.utils import timezone
 from datetime import timedelta
 
 
+# Helper function for dynamic default (required for migrations)
+def get_expiration_date():
+    return timezone.now() + timedelta(days=7)
+
+
 #this is just our beautiful project over here 
 class Project(models.Model):
     name = models.CharField(max_length=200)
@@ -39,7 +44,7 @@ class Invitation(models.Model):
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    expires_at = models.DateTimeField(default=timezone.now() + timedelta(days=7))
+    expires_at = models.DateTimeField(default=get_expiration_date)  # <-- FIXED HERE
 
     def __str__(self):
         return f"{self.invited_by} invited {self.invited_user} to {self.project.name}"
@@ -60,4 +65,4 @@ class Invitation(models.Model):
         return False
 
     def is_expired(self):
-        return timezone.now() > self.expires_at        
+        return timezone.now() > self.expires_at
